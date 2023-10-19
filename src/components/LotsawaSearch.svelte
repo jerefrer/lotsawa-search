@@ -11,6 +11,7 @@
   let pageLoaded = false;
   let loading = false;
   let errors = false;
+  let noResults = false;
   let prayersWithMatchingLines = [];
 
   const searchTerm = writable("རང་རིག་");
@@ -58,6 +59,7 @@
 
   $: loadPrayers = function () {
     loading = true;
+    noResults = false;
     prayersWithMatchingLines = [];
     let url = encodeURIComponent(
       `https://www.lotsawahouse.org/Cgi/search.pl?searchlang=${$language}&op=Search&q="${$searchTerm}"`
@@ -190,6 +192,7 @@
           });
         Promise.all(promises).then(function () {
           loading = false;
+          noResults = true;
         });
       })
       .catch(function (error) {
@@ -296,6 +299,10 @@
           >
           <div>Boom. Something didn't go as planned.</div>
         </div>
+      {/if}
+
+      {#if noResults}
+        <div class="mt-4 text-center text-gray-500">No results.</div>
       {/if}
 
       {#each prayersWithMatchingLines as prayer (prayer.url)}
